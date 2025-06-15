@@ -1,3 +1,8 @@
+## Live Project
+
+View the live application here: [URL Shortener Client](https://url-shortener-client-lake.vercel.app/)
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

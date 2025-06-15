@@ -93,12 +93,12 @@ function Analytics() {
                                                 ) : details[item.short_code] ? (
                                                     <>
                                                         <div className="detailBlock">
-                                                            <h4>🔥 Summary</h4>
+                                                            <h4>Summary</h4>
                                                             <p>Total Access: <span className="badge">{details[item.short_code].total}</span></p>
                                                         </div>
 
                                                         <div className="detailBlock">
-                                                            <h4>⏱ Last Access</h4>
+                                                            <h4>Last Access</h4>
                                                             <ul>
                                                                 {details[item.short_code].last_access?.map((acc, idx) => (
                                                                     <li key={idx}>
@@ -109,7 +109,7 @@ function Analytics() {
                                                         </div>
 
                                                         <div className="detailBlock">
-                                                            <h4>🔗 Referrers</h4>
+                                                            <h4>Referrers</h4>
                                                             <ul>
                                                                 {details[item.short_code].referrers?.map((ref, idx) => (
                                                                     <li key={idx}>
@@ -120,7 +120,7 @@ function Analytics() {
                                                         </div>
 
                                                         <div className="detailBlock">
-                                                            <h4>🌍 IP Addresses</h4>
+                                                            <h4>IP Addresses</h4>
                                                             <ul>
                                                                 {details[item.short_code].ip_groups?.map((ip, idx) => (
                                                                     <li key={idx}>
