@@ -1,155 +1,73 @@
-import React, { useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import "../App.css";
-import { servicebaseurl } from "../App";
-
+import { auth, provider, signInWithPopup } from "../config/firebaseConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../store/authSlice";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import LoginModal from "./LoginModal";
 
 function Analytics() {
-    const [analytics, setAnalytics] = useState([]);
+    const currentUser = useSelector((state) => state.currentUser.user);
+    const [showLogin, setShowLogin] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const [showAnalytics, setShowAnalytics] = useState(false);
-    const [expandedId, setExpandedId] = useState(null);
-    const [details, setDetails] = useState({});
-    const [loading, setLoading] = useState({});
-    const [error, setError] = useState(null);
-
-    async function handleToggle(shortCode) {
-        if (expandedId === shortCode) {
-            setExpandedId(null);
-            return;
+    useEffect(() => {
+        const storedUser = Cookies.get("authUser");
+        const token = Cookies.get("authToken");
+        if (storedUser && token) {
+            dispatch(setUser({ user: JSON.parse(storedUser), token }));
         }
-        setLoading((prev) => ({ ...prev, [shortCode]: true }))
+    }, []);
+
+    const analyticBtn = async () => {
+        console.log(currentUser)
         try {
-            const res = await axios.get(`${servicebaseurl}analytics/${shortCode}`);
-            const data = res?.data;
+            if (currentUser?.email) {
+                navigate("/analytics");
 
-            setDetails((prev) => ({ ...prev, [shortCode]: data }))
-            setExpandedId(shortCode);
+            } else {
+                // for firebase authentication 
+                // const result = await signInWithPopup(auth, provider);
+                // const user = result.user;
+                // const token = await user.getIdToken();
+                // 
+                // const firebaseUser = {
+                //     uid: user.uid,
+                //     email: user.email,
+                //     displayName: user.displayName,
+                //     photoURL: user.photoURL,
+                //     providerData: user.providerData,
+                // };
+
+                // Cookies.set("authUser", JSON.stringify(firebaseUser), { expires: 1 / (24 * 60) });
+                // Cookies.set("authToken", token, { expires: 1 / (24 * 60) });
+
+                // dispatch(setUser({ user: firebaseUser, token }));
+
+                setShowLogin(true)
+
+            }
         } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading((prev) => ({ ...prev, [shortCode]: false }))
+            console.error("Login error:", err.message);
         }
-    }
-
-    async function fetchAnalytics() {
-        try {
-            const response = await axios.get(`${servicebaseurl}url/allcode`);
-            const res = response?.data || []
-            setAnalytics(res);
-            setShowAnalytics(true);
-        } catch (err) {
-            setError(err?.message || "Unable to fetch analytics.");
-        }
-    }
-
-    const close = () => {
-        setShowAnalytics(false);
-        setExpandedId(null);
-    }
+    };
 
     return (
         <>
-            <div className="header">
-                <button onClick={fetchAnalytics} className="analyticsBtn">
+            <div className="flex justify-end mt-10">
+                <button onClick={analyticBtn} className="mb-4 px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-md transition">
                     View Analytics
                 </button>
             </div>
-
-            {error && <p className="error">{error}</p>}
-
-            {showAnalytics && (
-                <div className="modal" onClick={() => setShowAnalytics(false)}>
-                    <div
-                        className="modalContent"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <span
-                            className="closeBtn"
-                            onClick={close}
-                        >
-                            ✕
-                        </span>
-
-                        <h2>All Shortened URLs</h2>
-
-                        {analytics.length > 0 ? (
-                            <ul>
-                                {analytics.map((item, idx) => (
-                                    <li key={idx}>
-                                        <div
-                                            className="linkHeader"
-                                            onClick={() => handleToggle(item.short_code)}
-                                        >
-                                            <span>{expandedId === item.short_code ? "▲" : " ▼"}</span>
-
-                                            <span>{`${servicebaseurl}${item.short_code}`}</span>
-                                        </div>
-
-                                        {expandedId === item.short_code && (
-                                            <div className="linkDetails">
-                                                {loading[item.short_code] ? (
-                                                    <p>Loading...</p>
-                                                ) : details[item.short_code] ? (
-                                                    <>
-                                                        <div className="detailBlock">
-                                                            <h4>Summary</h4>
-                                                            <p>Total Access: <span className="badge">{details[item.short_code].total}</span></p>
-                                                        </div>
-
-                                                        <div className="detailBlock">
-                                                            <h4>Last Access</h4>
-                                                            <ul>
-                                                                {details[item.short_code].last_access?.map((acc, idx) => (
-                                                                    <li key={idx}>
-                                                                        {new Date(acc.accessed_at).toLocaleString()}
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-
-                                                        <div className="detailBlock">
-                                                            <h4>Referrers</h4>
-                                                            <ul>
-                                                                {details[item.short_code].referrers?.map((ref, idx) => (
-                                                                    <li key={idx}>
-                                                                        {ref.referrer} <span className="badge">{ref.count}</span>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-
-                                                        <div className="detailBlock">
-                                                            <h4>IP Addresses</h4>
-                                                            <ul>
-                                                                {details[item.short_code].ip_groups?.map((ip, idx) => (
-                                                                    <li key={idx}>
-                                                                        {ip.ip} <span className="badge">{ip.count}</span>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <p>No details available</p>
-                                                )}
-
-                                            </div>
-                                        )}
-
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No URLs found.</p>
-                        )}
-
-                    </div>
-                </div>
-            )}
-
+            {
+                showLogin && (
+                    <LoginModal showLogin={showLogin} setShowLogin={setShowLogin} />
+                )
+            }
         </>
-    )
+    );
 }
 
 export default Analytics;

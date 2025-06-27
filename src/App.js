@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import Shortener from "./components/Shortener";
-import Analytics from "./components/Analytics";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Shortener from "./pages/Shortener";
 import "./App.css";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import ProtectedRoutes from "./ProtectedRoutes";
 
-export const servicebaseurl = 'https://url-shortner-api-sw4a.onrender.com/';
 
 function App() {
   return (
-    <div className="container">
-      <Analytics />
-      <Shortener />
-    </div>
+    <Routes>
+      <Route path="/" element={<Shortener />} />
+      <Route path="/analytics" element={<ProtectedRoutes><AnalyticsPage /></ProtectedRoutes>} />
+      <Route path="*" element={<Navigate to={'/'} />} />
+    </Routes>
   )
 }
 
