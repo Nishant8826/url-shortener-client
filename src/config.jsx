@@ -1,1 +1,1 @@
-export const servicebaseurl = 'http://localhost:5000/';
+export const servicebaseurl = 'https://url-shortner-api-sw4a.onrender.com/';
