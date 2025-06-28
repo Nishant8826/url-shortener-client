@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import DetailsModal from '../components/DetailsModal';
 import { MdOutlineArrowBack } from "react-icons/md";
 import { CiLight } from "react-icons/ci";

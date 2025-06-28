@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import "../App.css";
 import Analytics from "../components/Analytics";
@@ -43,12 +43,25 @@ function Shortener() {
         dispatch(toggleTheme())
     };
 
+    useEffect(() => {
+        serverWakeUpCall();
+    }, [])
+
+    const serverWakeUpCall = async () => {
+        try {
+            const resp = await axios.get(`${servicebaseurl}`);
+            console.log("Server Waked up - ", resp.data)
+        } catch (error) {
+            console.log('Error while waking up server - ', error);
+        }
+    }
+
 
     return (
         <div className={`${theme == 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'} min-h-screen p-6 transition-all duration-300`}>
 
             <div className="flex justify-between">
-                <h2 className="text-2xl font-bold mb-4">URL's Analytics</h2>
+                <h2 className="text-2xl font-bold mb-4">URL's Anasdcsdlytics</h2>
 
                 <div className="flex justify-between items-center mb-6">
                     <button

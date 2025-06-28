@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../App.css";
-import { auth, provider, signInWithPopup } from "../config/firebaseConfig";
+// import { auth, provider, signInWithPopup } from "../config/firebaseConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../store/authSlice";
 import Cookies from "js-cookie";
